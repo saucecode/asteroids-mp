@@ -12,9 +12,9 @@ public class Program {
 		System.setProperty("org.lwjgl.librarypath", System.getProperty("user.dir") + "/natives");
 		AsteroidField game = new AsteroidField();
 		
-		//String serverIP = "localhost";
+		String serverIP = "localhost";
 		//String serverIP = JOptionPane.showInputDialog("Enter server IP:");
-		String serverIP = args[0];
+		//String serverIP = args[0];
 		int port = 25565;
 		String username = "Player-" + (int) Math.floor(Math.random()*50);
 		

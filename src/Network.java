@@ -112,6 +112,7 @@ public class Network extends Listener {
 			PacketPlayerState packet = (PacketPlayerState) o;
 			if(packet.id == -1){ // update my life state
 				if(packet.dead){
+					game.createExplosion(game.player.x, game.player.y, game.player.dx, game.player.dy, 120);
 					game.player.kill();
 					game.respawnTimer = System.currentTimeMillis() + packet.respawnTime;
 					game.respawnMaxTime = packet.respawnTime;
@@ -119,10 +120,12 @@ public class Network extends Listener {
 					game.player.respawn();
 				}
 			}else{
-				if(packet.dead)
+				if(packet.dead){
+					game.createExplosion(agents[packet.id].x, agents[packet.id].y, agents[packet.id].dx, agents[packet.id].dy, 120);
 					agents[packet.id].kill();
-				else
+				}else{
 					agents[packet.id].respawn();
+				}
 			}
 			
 		}

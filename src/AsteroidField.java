@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 
@@ -10,6 +11,7 @@ public class AsteroidField {
 	List<Projectile> projectiles = new ArrayList<Projectile>();
 	Player player = new Player(this, 720/2, 720/2);
 	Network network;
+	Random random = new Random();
 	long respawnTimer = 0, respawnMaxTime = 0;
 	
 	public void init() {
@@ -81,7 +83,9 @@ public class AsteroidField {
 			a.render();
 		}
 		GL11.glBegin(GL11.GL_POINTS);
-		for(Projectile j : projectiles){
+		for(int i=0; i<projectiles.size(); i++){
+			Projectile j = projectiles.get(i);
+			if(j == null) continue;
 			j.draw();
 		}
 		GL11.glEnd();
@@ -101,5 +105,25 @@ public class AsteroidField {
 			p.addMotionAngle((float) (speed - 0.5 + Math.random()), angle - 15 + (short) Math.round(30*Math.random()));
 			projectiles.add(p);
 		}
+	}
+	
+	// Create an explosion at x,y, with [size] particles moving at speed vx,vy
+	public void createExplosion(float x, float y, float vx, float vy, int size){
+		for(int i=0; i<size; i++){
+			Projectile p = new Projectile(x, y, (short) (Math.round(Math.random() * 60) * 2));
+			double angle = 180 + calcDeclinationAngle(x, y, x+vx, y+vy) - 50 + random.nextInt(100);
+			float motionVariance = 1.7f;
+			//p.addMotion(vx-motionVariance + random.nextFloat()*motionVariance*2f, vy-motionVariance + random.nextFloat()*motionVariance*2f);
+			p.addMotionAngle((float) Math.hypot(vx, vy)*.5f - motionVariance + random.nextFloat()*motionVariance*2, (float) angle);
+			projectiles.add(p);
+		}
+		System.out.println("Created explosion");
+	}
+	
+	public static double calcDeclinationAngle(float p1x, float p1y, float p2x, float p2y){
+		double x = 360-(Math.toDegrees(Math.atan2(p1y-p2y, p1x-p2x)) + 270);
+		while(x < 0) x+=360;
+		while(x > 360) x-=360;
+		return x;
 	}
 }
