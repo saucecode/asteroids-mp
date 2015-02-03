@@ -1,8 +1,14 @@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
+
+import tools.Texture;
+import tools.TextureLoader;
 
 
 public class AsteroidField {
@@ -13,9 +19,22 @@ public class AsteroidField {
 	Network network;
 	Random random = new Random();
 	long respawnTimer = 0, respawnMaxTime = 0;
+	static TextureLoader loader = new TextureLoader();
+	static Texture defaultPlayer;
 	
 	public void init() {
-		
+		try {
+			defaultPlayer = loader.getTexture("avatars/spaceship.png", false);
+			if(new File("avatars/custom.png").exists()){
+				player.texture = loader.getTexture("avatars/custom.png", false);
+				player.hasCustomTexture = true;
+			}else{
+				player.texture = defaultPlayer;
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void update() {
@@ -91,7 +110,7 @@ public class AsteroidField {
 		GL11.glEnd();
 		
 	}
-
+	
 	public Asteroid getAsteroidByID(int id) {
 		for(Asteroid a : asteroids){
 			if(a.id == id) return a;

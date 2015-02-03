@@ -1,0 +1,9 @@
+This is the avatars folder!
+All the custom avatars of people you play with will be downloaded here.
+
+spaceship.png is the default/placeholder texture for all spaceships (if they do not have textures, or their textures are still being loaded).
+
+custom.png is the avatar that will be sent to the server, and will be how other players see you. Feel free to edit it into wacky crazy things.
+NOTE: By default custom.png does not exist. spaceship.png will be used until you create custom.png in this folder.
+
+custom.png should always be a png image. Recommended to be size 32x32. Transparency is supported and encouraged.

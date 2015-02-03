@@ -2,6 +2,8 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
+import tools.Texture;
+
 
 public class Player extends Vector2f {
 
@@ -9,10 +11,12 @@ public class Player extends Vector2f {
 	AsteroidField game;
 	float dx, dy;
 	short angle;
+	Texture texture;
 	
 	float networkdx, networkdy;
 	short networkAngle;
 	boolean dead = false;
+	boolean hasCustomTexture;
 	
 	public Player(AsteroidField asteroidField, float x, float y) {
 		super(x,y);
@@ -62,13 +66,37 @@ public class Player extends Vector2f {
 
 	public void render() {
 		if(dead) return;
-		GL11.glBegin(GL11.GL_TRIANGLES);
-		
-		GL11.glVertex2d(x + Math.sin(Math.toRadians(angle))*8, y + Math.cos(Math.toRadians(angle))*8);
-		GL11.glVertex2d(x + Math.sin(Math.toRadians(angle+140))*8, y + Math.cos(Math.toRadians(angle+140))*8);
-		GL11.glVertex2d(x + Math.sin(Math.toRadians(angle+220))*8, y + Math.cos(Math.toRadians(angle+220))*8);
-		
-		GL11.glEnd();
+		GL11.glColor3f(1, 1, 1);
+		if(texture == null){
+			GL11.glBegin(GL11.GL_TRIANGLES);
+
+			GL11.glVertex2d(x + Math.sin(Math.toRadians(angle))*8, y + Math.cos(Math.toRadians(angle))*8);
+			GL11.glVertex2d(x + Math.sin(Math.toRadians(angle+140))*8, y + Math.cos(Math.toRadians(angle+140))*8);
+			GL11.glVertex2d(x + Math.sin(Math.toRadians(angle+220))*8, y + Math.cos(Math.toRadians(angle+220))*8);
+
+			GL11.glEnd();
+		}else{
+			GL11.glLoadIdentity();
+			GL11.glTranslatef(x, y, 0);
+			GL11.glRotatef(360-angle, 0, 0, 1);
+			texture.bind();
+			GL11.glBegin(GL11.GL_QUADS);
+			GL11.glTexCoord2f(0, 0);
+			GL11.glVertex2f(-16, 16);
+
+			GL11.glTexCoord2f(1, 0);
+			GL11.glVertex2f(16, 16);
+
+			GL11.glTexCoord2f(1, 1);
+			GL11.glVertex2f(16, -16);
+
+			GL11.glTexCoord2f(0, 1);
+			GL11.glVertex2f(-16, -16);
+			GL11.glEnd();
+			
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+			GL11.glLoadIdentity();
+		}
 	}
 
 	public void kill() {

@@ -1,4 +1,5 @@
-import javax.swing.JOptionPane;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -26,7 +27,8 @@ public class Program {
 			try{
 				Thread.sleep(1000);
 			}catch(Exception e){
-				continue;
+				e.printStackTrace();
+				System.exit(1);
 			}
 		}
 		
@@ -53,5 +55,29 @@ public class Program {
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, Display.getWidth(), Display.getHeight(), 0, -1, 1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glEnable(GL11.GL_ALPHA);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+	}
+	
+	public static String md5(byte[] data){
+		try {
+			MessageDigest digestiveTract = MessageDigest.getInstance("MD5");
+			digestiveTract.update(data);
+			return byteArrayToHexString(digestiveTract.digest());
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static String byteArrayToHexString(byte[] b) {
+		String result = "";
+		for (int i=0; i < b.length; i++) {
+			result +=
+					Integer.toString( ( b[i] & 0xff ) + 0x100, 16).substring( 1 );
+		}
+		return result;
 	}
 }

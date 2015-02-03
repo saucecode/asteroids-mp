@@ -1,4 +1,7 @@
 import java.awt.Polygon;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import com.esotericsoftware.kryo.Kryo;
@@ -19,9 +22,10 @@ public class Network extends Listener {
 		this.game = game;
 		this.serverIP = serverIP;
 		this.port = port;
-		client = new Client();
+		client = new Client(16384, 12384);
 		Kryo k = client.getKryo();
 		k.register(int[].class);
+		k.register(byte[].class);
 		k.register(PacketJoin.class);
 		k.register(PacketMakeAsteroid.class);
 		k.register(PacketUpdateAsteroid.class);
@@ -42,6 +46,20 @@ public class Network extends Listener {
 			
 			PacketJoin packet = new PacketJoin();
 			packet.username = username;
+			if(new File("avatars/custom.png").exists()){
+				packet.hasAvatar = true;
+				
+				File file = new File("avatars/custom.png");
+				byte[] data = new byte[(int) file.length()];
+				FileInputStream fis = new FileInputStream(file);
+				fis.read(data);
+				fis.close();
+				
+				packet.avatarData = data;
+				
+			}else{
+				packet.hasAvatar = false;
+			}
 			client.sendTCP(packet);
 			
 		} catch (IOException e) {
@@ -49,19 +67,49 @@ public class Network extends Listener {
 		}
 	}
 	
+	/*public void sendAvatar(){
+		try {
+			PacketAvatar packet = new PacketAvatar();
+			File file = new File("avatars/custom.png");
+			byte[] data = new byte[(int) file.length()];
+			FileInputStream fis = new FileInputStream(file);
+			fis.read(data);
+			fis.close();
+			packet.imageFile = data;
+			client.sendTCP(packet);
+			System.out.println("Uploaded custom image file");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}*/
+	
 	public void received(Connection c, Object o){
 		if(o instanceof PacketJoin){
 			PacketJoin packet = (PacketJoin) o;
 			if(packet.id == -1){
 				if(packet.accepted){
 					System.out.println("Successfully joined the game.");
+					
 				}else{
 					System.out.println("Server rejected our connection. Closing...");
 					client.close();
 				}
 			}else{
 				agents[packet.id] = new Agent(packet.id, packet.username);
-				System.out.println("Added new agent with name " + packet.username + " (" + packet.id + ")");
+				agents[packet.id].avatarFile = null;
+				if(packet.hasAvatar){
+					agents[packet.id].avatarFile = "avatars/" + Program.md5(packet.avatarData) + ".png";
+					try {
+						FileOutputStream fos = new FileOutputStream(new File(agents[packet.id].avatarFile));
+						fos.write(packet.avatarData);
+						fos.flush();
+						fos.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+						agents[packet.id].avatarFile = null;
+					}
+				}
+				System.out.println("Added new agent with name " + packet.username + " (" + packet.id + ") with avatar: " + packet.hasAvatar);
 			}
 			
 		}else if(o instanceof PacketMakeAsteroid){
@@ -127,8 +175,11 @@ public class Network extends Listener {
 					agents[packet.id].respawn();
 				}
 			}
-			
 		}
+	}
+	
+	public void disconnected(Connection c){
+		System.out.println("disconnected");
 	}
 
 }
