@@ -7,3 +7,7 @@ custom.png is the avatar that will be sent to the server, and will be how other 
 NOTE: By default custom.png does not exist. spaceship.png will be used until you create custom.png in this folder.
 
 custom.png should always be a png image. Recommended to be size 32x32. Transparency is supported and encouraged.
+
+
+The images spaceship.png and 198ac22ef73366ed3121581c338c6121.png are licensed CC BY-NC-SA 4.0 by Connor McLinden.
+https://creativecommons.org/licenses/by-nc-sa/4.0/
