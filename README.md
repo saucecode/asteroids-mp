@@ -9,3 +9,4 @@ The goal of the game (currently) is to use your ship's thrust to accelerate aste
 Other game modes could potentially be implemented.
 Depends on kryonet-2.18-all.jar, lwjgl_util.jar, lwjgl.jar.
 
+The complimenting server is available [here](https://github.com/saucecode/asteroids-mp-server).
