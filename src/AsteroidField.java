@@ -15,6 +15,10 @@ import tools.TextureLoader;
 
 public class AsteroidField {
 
+	public static final File fontFile = new File("res/kenvector_future.ttf");
+	public static final File customAvatarFile = new File("avatars/custom.png");
+	public static final File defaultAvatarFile = new File("avatars/spaceship.png");
+	
 	List<Asteroid> asteroids = new ArrayList<Asteroid>();
 	List<Projectile> projectiles = new ArrayList<Projectile>();
 	Player player = new Player(this, 720/2, 720/2);
@@ -27,15 +31,15 @@ public class AsteroidField {
 	
 	public void init() {
 		try {
-			defaultPlayer = loader.getTexture("avatars/spaceship.png", false);
-			if(new File("avatars/custom.png").exists()){
-				player.texture = loader.getTexture("avatars/custom.png", false);
+			defaultPlayer = loader.getTexture(defaultAvatarFile.getAbsolutePath(), false);
+			if(customAvatarFile.exists()){
+				player.texture = loader.getTexture(customAvatarFile.getAbsolutePath(), false);
 				player.hasCustomTexture = true;
 			}else{
 				player.texture = defaultPlayer;
 			}
 			
-			font = new FontTT(Font.createFont(Font.TRUETYPE_FONT, new File("res/kenvector_future.ttf")), 16, 0);
+			font = new FontTT(Font.createFont(Font.TRUETYPE_FONT, fontFile), 16, 0);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -95,12 +99,7 @@ public class AsteroidField {
 	public void render() {
 		GL11.glColor3f(1, 1, 1);
 		for(Asteroid a : asteroids){
-			GL11.glBegin(GL11.GL_LINES);
-			for(int i=0; i<a.shape.npoints; i++){
-				GL11.glVertex2f(a.x + a.shape.xpoints[i], a.y + a.shape.ypoints[i]);
-				GL11.glVertex2f(a.x + a.shape.xpoints[(i+1)%a.shape.npoints], a.y + a.shape.ypoints[(i+1)%a.shape.npoints]);
-			}
-			GL11.glEnd();
+			a.render();
 		}
 		
 		player.render();

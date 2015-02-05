@@ -46,12 +46,11 @@ public class Network extends Listener {
 			
 			PacketJoin packet = new PacketJoin();
 			packet.username = username;
-			if(new File("avatars/custom.png").exists()){
+			if(AsteroidField.customAvatarFile.exists()){
 				packet.hasAvatar = true;
 				
-				File file = new File("avatars/custom.png");
-				byte[] data = new byte[(int) file.length()];
-				FileInputStream fis = new FileInputStream(file);
+				byte[] data = new byte[(int) AsteroidField.customAvatarFile.length()];
+				FileInputStream fis = new FileInputStream(AsteroidField.customAvatarFile);
 				fis.read(data);
 				fis.close();
 				
@@ -67,33 +66,18 @@ public class Network extends Listener {
 		}
 	}
 	
-	/*public void sendAvatar(){
-		try {
-			PacketAvatar packet = new PacketAvatar();
-			File file = new File("avatars/custom.png");
-			byte[] data = new byte[(int) file.length()];
-			FileInputStream fis = new FileInputStream(file);
-			fis.read(data);
-			fis.close();
-			packet.imageFile = data;
-			client.sendTCP(packet);
-			System.out.println("Uploaded custom image file");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}*/
-	
 	public void received(Connection c, Object o){
 		if(o instanceof PacketJoin){
 			PacketJoin packet = (PacketJoin) o;
 			if(packet.id == -1){
 				if(packet.accepted){
 					System.out.println("Successfully joined the game.");
-					
 				}else{
 					System.out.println("Server rejected our connection. Closing...");
 					client.close();
+					System.exit(0);
 				}
+				
 			}else{
 				agents[packet.id] = new Agent(packet.id, packet.username);
 				agents[packet.id].avatarFile = null;
@@ -110,6 +94,7 @@ public class Network extends Listener {
 					}
 				}
 				System.out.println("Added new agent with name " + packet.username + " (" + packet.id + ") with avatar: " + packet.hasAvatar);
+				
 			}
 			
 		}else if(o instanceof PacketMakeAsteroid){
@@ -117,9 +102,7 @@ public class Network extends Listener {
 			Asteroid newAsteroid = new Asteroid(packet.id, packet.x, packet.y);
 			newAsteroid.vx = packet.vx;
 			newAsteroid.vy = packet.vy;
-			//newAsteroid.shape = packet.shape;
 			newAsteroid.shape = new Polygon(packet.xpoints, packet.ypoints, packet.pointCount);
-			//newAsteroid.shape.translate((int) packet.x, (int) packet.y); -- translated on server side
 			game.asteroids.add(newAsteroid);
 			System.out.println("Created asteroid with id " + packet.id + " at " + packet.x + " " + packet.y);
 			
@@ -175,6 +158,7 @@ public class Network extends Listener {
 					agents[packet.id].respawn();
 				}
 			}
+			
 		}
 	}
 	
