@@ -1,5 +1,6 @@
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 
+import tools.FontTT;
 import tools.Texture;
 import tools.TextureLoader;
 
@@ -21,6 +23,7 @@ public class AsteroidField {
 	long respawnTimer = 0, respawnMaxTime = 0;
 	static TextureLoader loader = new TextureLoader();
 	static Texture defaultPlayer;
+	static FontTT font;
 	
 	public void init() {
 		try {
@@ -32,7 +35,11 @@ public class AsteroidField {
 				player.texture = defaultPlayer;
 			}
 			
+			font = new FontTT(Font.createFont(Font.TRUETYPE_FONT, new File("res/kenvector_future.ttf")), 16, 0);
+			
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (FontFormatException e) {
 			e.printStackTrace();
 		}
 	}

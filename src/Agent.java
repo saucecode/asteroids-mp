@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.io.IOException;
 
 import org.lwjgl.opengl.GL11;
@@ -12,7 +13,7 @@ public class Agent extends Vector2f {
 	int id;
 	String username;
 	float dx = 0, dy = 0;
-	float ddx = 0, ddy = 0; // change in change in velocity, to detect projectile production
+	float ddx = 0, ddy = 0; // change in change in velocity, to client-side predict projectile production
 	short angle = 0;
 	boolean removed = false;
 	boolean dead = false;
@@ -28,7 +29,7 @@ public class Agent extends Vector2f {
 	public void update(){
 		if(dead) return;
 		if(texture == null && avatarFile != null){
-			// load the player's texture
+			// load the player's texture if not already loaded
 			try {
 				texture = AsteroidField.loader.getTexture(avatarFile, false);
 			} catch (IOException e) {
@@ -49,57 +50,37 @@ public class Agent extends Vector2f {
 	
 	public void render() {
 		if(dead) return;
-		if(texture == null){
-			/*GL11.glColor3f(1, 1, 0);
-			GL11.glBegin(GL11.GL_TRIANGLES);
-			
-			GL11.glVertex2d(x + Math.sin(Math.toRadians(angle))*8, y + Math.cos(Math.toRadians(angle))*8);
-			GL11.glVertex2d(x + Math.sin(Math.toRadians(angle+140))*8, y + Math.cos(Math.toRadians(angle+140))*8);
-			GL11.glVertex2d(x + Math.sin(Math.toRadians(angle+220))*8, y + Math.cos(Math.toRadians(angle+220))*8);
-			
-			GL11.glEnd();*/
-			GL11.glLoadIdentity();
-			GL11.glTranslatef(x, y, 0);
-			GL11.glRotatef(360-angle, 0, 0, 1);
-			AsteroidField.defaultPlayer.bind();
-			GL11.glBegin(GL11.GL_QUADS);
-			GL11.glTexCoord2f(0, 0);
-			GL11.glVertex2f(-16, 16);
-
-			GL11.glTexCoord2f(1, 0);
-			GL11.glVertex2f(16, 16);
-
-			GL11.glTexCoord2f(1, 1);
-			GL11.glVertex2f(16, -16);
-
-			GL11.glTexCoord2f(0, 1);
-			GL11.glVertex2f(-16, -16);
-			GL11.glEnd();
-			
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-			GL11.glLoadIdentity();
-		}else{
-			GL11.glLoadIdentity();
-			GL11.glTranslatef(x, y, 0);
-			GL11.glRotatef(360-angle, 0, 0, 1);
+		
+		GL11.glLoadIdentity();
+		GL11.glTranslatef(x, y, 0);
+		GL11.glRotatef(360-angle, 0, 0, 1);
+		if(texture != null)
 			texture.bind();
-			GL11.glBegin(GL11.GL_QUADS);
-			GL11.glTexCoord2f(0, 0);
-			GL11.glVertex2f(-16, 16);
+		else
+			AsteroidField.defaultPlayer.bind();
+		drawQuad();
+		
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+		GL11.glLoadIdentity();
+		
+		AsteroidField.font.drawText(this.username, 12, x, y+18, 0, Color.YELLOW, 0, 180, 180, true);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+	}
+	
+	public void drawQuad(){
+		GL11.glBegin(GL11.GL_QUADS);
+		GL11.glTexCoord2f(0, 0);
+		GL11.glVertex2f(-16, 16);
 
-			GL11.glTexCoord2f(1, 0);
-			GL11.glVertex2f(16, 16);
+		GL11.glTexCoord2f(1, 0);
+		GL11.glVertex2f(16, 16);
 
-			GL11.glTexCoord2f(1, 1);
-			GL11.glVertex2f(16, -16);
+		GL11.glTexCoord2f(1, 1);
+		GL11.glVertex2f(16, -16);
 
-			GL11.glTexCoord2f(0, 1);
-			GL11.glVertex2f(-16, -16);
-			GL11.glEnd();
-			
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-			GL11.glLoadIdentity();
-		}
+		GL11.glTexCoord2f(0, 1);
+		GL11.glVertex2f(-16, -16);
+		GL11.glEnd();
 	}
 	
 	public void kill(){
