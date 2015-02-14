@@ -3,7 +3,11 @@ import java.awt.FontFormatException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
@@ -28,6 +32,7 @@ public class AsteroidField {
 	static TextureLoader loader = new TextureLoader();
 	static Texture defaultPlayer;
 	static FontTT font;
+	static Map<Short, ServerText> serverSideTexts = new HashMap<Short, ServerText>();
 	
 	public void init() {
 		try {
@@ -115,6 +120,21 @@ public class AsteroidField {
 		}
 		GL11.glEnd();
 		
+		// Server side texts
+		Iterator<Entry<Short, ServerText>> entryIterator = serverSideTexts.entrySet().iterator();
+		for(int i=0; i<serverSideTexts.size(); i++){
+			if(!entryIterator.hasNext()) continue;
+			Entry<Short, ServerText> entry = entryIterator.next();
+			if(entry.getValue().isDeleted()){
+				serverSideTexts.remove(entry.getKey());
+			}
+		}
+		for(Short key : serverSideTexts.keySet()){
+			if(!serverSideTexts.containsKey(key)) continue;
+			ServerText text = serverSideTexts.get(key);
+			font.drawText(text.getMessage(), text.getSize(), text.getX(), text.getY(), 0, text.getColor(), 0, 0, 0, false);
+		}
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
 	
 	public Asteroid getAsteroidByID(int id) {

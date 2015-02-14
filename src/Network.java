@@ -32,6 +32,9 @@ public class Network extends Listener {
 		k.register(PacketDropPlayer.class);
 		k.register(PacketUpdatePlayer.class);
 		k.register(PacketPlayerState.class);
+		k.register(PacketDrawText.class);
+		k.register(PacketClearText.class);
+		k.register(PacketUpdateText.class);
 		client.addListener(this);
 		client.start();
 	}
@@ -157,6 +160,31 @@ public class Network extends Listener {
 				}else{
 					agents[packet.id].respawn();
 				}
+			}
+			
+		}else if(o instanceof PacketDrawText){
+			PacketDrawText packet = (PacketDrawText) o;
+			if(AsteroidField.serverSideTexts.containsKey(packet.id)){
+				ServerText text = AsteroidField.serverSideTexts.get(packet.id);
+				text.setMessage(packet.text);
+				text.setSize(packet.size);
+				text.setX(packet.x);
+				text.setY(packet.y);
+			}else{
+				ServerText text = new ServerText(packet.id, packet.text, packet.x, packet.y, packet.size, PacketDrawText.colors.get(packet.color));
+				AsteroidField.serverSideTexts.put(packet.id, text);
+			}
+			
+		}else if(o instanceof PacketUpdateText){
+			PacketUpdateText packet = (PacketUpdateText) o;
+			if(AsteroidField.serverSideTexts.containsKey(packet.id)){
+				AsteroidField.serverSideTexts.get(packet.id).setMessage(packet.text);
+			}
+			
+		}else if(o instanceof PacketClearText){
+			PacketClearText packet = (PacketClearText) o;
+			if(AsteroidField.serverSideTexts.containsKey(packet.id)){
+				AsteroidField.serverSideTexts.get(packet.id).setDeleted(true);
 			}
 			
 		}

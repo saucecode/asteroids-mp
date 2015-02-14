@@ -44,7 +44,7 @@ public class TextureLoader {
 	private int target = GL11.GL_TEXTURE_2D;
 	private int dstPixelFormat = GL11.GL_RGBA;
 	//private int dstPixelFormat = GL13.GL_COMPRESSED_RGBA;
-	private int minFilter = GL11.GL_LINEAR_MIPMAP_NEAREST;
+	private int minFilter = GL11.GL_LINEAR;
 	private int magFilter = GL11.GL_LINEAR;
 	
 	/** 
@@ -162,7 +162,7 @@ public class TextureLoader {
 		} 
 		
 		// produce a texture from the byte buffer
-		/*
+		
 		GL11.glTexImage2D(target, 
 				0, 
 				dstPixelFormat, 
@@ -172,10 +172,9 @@ public class TextureLoader {
 				srcPixelFormat, 
 				GL11.GL_UNSIGNED_BYTE, 
 				textureBuffer ); 
-		 */
+		 
 		
-		GLU.gluBuild2DMipmaps(target, dstPixelFormat, get2Fold(bufferedImage.getWidth()), 
-				get2Fold(bufferedImage.getHeight()), srcPixelFormat, GL11.GL_UNSIGNED_BYTE, textureBuffer); 
+		//GLU.gluBuild2DMipmaps(target, dstPixelFormat, get2Fold(bufferedImage.getWidth()),	get2Fold(bufferedImage.getHeight()), srcPixelFormat, GL11.GL_UNSIGNED_BYTE, textureBuffer); 
 
 		return texture; 
 			} 
