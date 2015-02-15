@@ -132,7 +132,7 @@ public class AsteroidField {
 		for(Short key : serverSideTexts.keySet()){
 			if(!serverSideTexts.containsKey(key)) continue;
 			ServerText text = serverSideTexts.get(key);
-			font.drawText(text.getMessage(), text.getSize(), text.getX(), text.getY(), 0, text.getColor(), 0, 180, 180, false);
+			font.drawText(text.getMessage(), text.getSize(), text.getX(), text.getY(), 0, text.getColor(), 0, 0, 0, false);
 		}
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
