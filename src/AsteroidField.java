@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import tools.FontTT;
@@ -29,6 +30,10 @@ public class AsteroidField {
 	Network network;
 	Random random = new Random();
 	long respawnTimer = 0, respawnMaxTime = 0;
+	private boolean relayKeyPresses = false;
+	private boolean[] keys = new boolean[32];
+	private boolean[] lastKeys = keys.clone();
+	
 	static TextureLoader loader = new TextureLoader();
 	static Texture defaultPlayer;
 	static FontTT font;
@@ -96,6 +101,20 @@ public class AsteroidField {
 			if(projectiles.get(i).destroyed){
 				projectiles.remove(i);
 				i--;
+			}
+		}
+		
+		// Key presses for the server - ONLY send 0-9 (0x02 to 0x0b and Enter (0x1c).
+		if(isRelayKeyPresses()){
+			for(int i=0; i<keys.length; i++){
+				if(i < 2 || (i > 11 && i != 28)) continue;
+				keys[i] = Keyboard.isKeyDown(i);
+				if(keys[i] && !lastKeys[i]){
+					PacketKeyPress packet = new PacketKeyPress();
+					packet.key = (byte) i;
+					network.client.sendTCP(packet);
+				}
+				lastKeys[i] = keys[i];
 			}
 		}
 	}
@@ -169,5 +188,13 @@ public class AsteroidField {
 		while(x < 0) x+=360;
 		while(x > 360) x-=360;
 		return x;
+	}
+
+	public boolean isRelayKeyPresses() {
+		return relayKeyPresses;
+	}
+
+	public void setRelayKeyPresses(boolean relayKeyPresses) {
+		this.relayKeyPresses = relayKeyPresses;
 	}
 }

@@ -35,6 +35,8 @@ public class Network extends Listener {
 		k.register(PacketDrawText.class);
 		k.register(PacketClearText.class);
 		k.register(PacketUpdateText.class);
+		k.register(PacketRelayKeys.class);
+		k.register(PacketKeyPress.class);
 		client.addListener(this);
 		client.start();
 	}
@@ -189,6 +191,11 @@ public class Network extends Listener {
 			if(AsteroidField.serverSideTexts.containsKey(packet.id)){
 				AsteroidField.serverSideTexts.get(packet.id).setDeleted(true);
 			}
+			
+		}else if(o instanceof PacketRelayKeys){
+			PacketRelayKeys packet = (PacketRelayKeys) o;
+			game.setRelayKeyPresses(packet.relayKeys);
+			System.out.println("Client relaying keys: " + game.isRelayKeyPresses());
 			
 		}
 	}
