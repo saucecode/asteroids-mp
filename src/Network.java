@@ -66,6 +66,9 @@ public class Network extends Listener {
 			
 		} catch (IOException e) {
 			e.printStackTrace();
+			if(e.getMessage().contains("Unable to connect")){
+				System.exit(1);
+			}
 		}
 	}
 	
