@@ -373,16 +373,16 @@ public class FontTT {
 		// draw a quad with to place the character onto
 		GL11.glBegin(GL11.GL_QUADS);
 		{
-			GL11.glTexCoord2f(0, texheight);
+			GL11.glTexCoord2f(0, 0);
 			GL11.glVertex2f(0 + x, 0 - y);
 			
-			GL11.glTexCoord2f(0, 0);
+			GL11.glTexCoord2f(0, texheight);
 			GL11.glVertex2f(0 + x, imgheight - y);
 			
-			GL11.glTexCoord2f(texwidth, 0);
+			GL11.glTexCoord2f(texwidth, texheight);
 			GL11.glVertex2f(imgwidth + x,imgheight - y);
 			
-			GL11.glTexCoord2f(texwidth, texheight);
+			GL11.glTexCoord2f(texwidth, 0);
 			GL11.glVertex2f(imgwidth + x,0 - y);
 		}
 		GL11.glEnd();
