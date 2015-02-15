@@ -84,7 +84,6 @@ public class AsteroidField {
 				double ax, ay; // acceleration, x/y
 				ax = agent.ddx-agent.dx;
 				ay = agent.ddy-agent.dy;
-				//boolean forward = !(Math.abs(agent.ddx) - Math.abs(agent.dx) > 0 || Math.abs(agent.ddy) - Math.abs(agent.dy) > 0);
 				boolean forward = Math.hypot(ax,ay) > 0.03f;
 				createProjectiles(agent.x, agent.y, forward ? (short) (agent.angle + 180) : agent.angle, 2.5f, 2);
 				agent.ddx = agent.dx;
